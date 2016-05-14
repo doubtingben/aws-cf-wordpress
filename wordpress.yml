@@ -1,0 +1,46 @@
+---
+
+- hosts: localhost
+  become: yes
+  tasks:
+
+  - name: Install system packages
+    yum: name={{ item }} state=latest
+    with_items:
+    - docker
+
+  - name: Stop default services
+    service: name={{ item }} state=stopped enabled=no
+    with_items:
+    - httpd
+    - mysqld
+
+  - name: Start system services
+    service: name={{ item }} state=started enabled=yes
+    with_items:
+    - docker
+
+  - name: Install python packages
+    pip: name={{ item }} state=latest
+    with_items:
+    - docker-py
+
+  - name: MySQL container
+    docker:
+      docker_api_version: "1.21"
+      name: wordpress-mysql
+      image: mysql:5
+      state: started
+      env:
+        MYSQL_ROOT_PASSWORD : "{{ lookup('password', '/tmp/passwordfile chars=ascii_letters') }}"
+
+  - name: Wordpress container
+    docker:
+      docker_api_version: "1.21"
+      name: wordpress-app
+      image: wordpress:4.5-apache
+      state: started
+      links:
+      - "wordpress-mysql:mysql"
+      ports:
+      - 80:80

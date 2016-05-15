@@ -137,28 +137,8 @@
       "DependsOn" : "AttachGateway",
       "Metadata" : {
         "Comment" : "Install a simple application",
-        "AWS::CloudFormation::Init" : {
-          "config" : {
-            "packages" : {
-              "yum" : {
-                "httpd"             : []
-              }
-            },
-
-            "files" : {
-              "/var/www/html/index.html" : {
-                "content" : { "Fn::Join" : ["\n", [
-                  "<h1>Congratulations, you have successfully launched the AWS CloudFormation sample.</h1>"
-                ]]},
-                "mode"    : "000644",
-                "owner"   : "root",
-                "group"   : "root"
-              }
-
-            }
-          }
-        }
-      },
+        "AWS::CloudFormation::Init" : { }
+        },
       "Properties" : {
         "ImageId" : "ami-f5f41398",
         "InstanceType" : "t2.micro",
@@ -174,16 +154,16 @@
         "UserData"       : { "Fn::Base64" : { "Fn::Join" : ["", [
              "#!/bin/bash -xe\n",
              "yum update -y aws-cfn-bootstrap\n",
-             "yum install -y git\n",
-
-             "git clone https://github.com/doubtingben/aws-cf-wordpress /opt/aws-cf-wordpress\n",
-             "pip install ansible\n",
-             "ansible-playbook -i \"localhost,\" -c local /opt/aws-cf-wordpress/wordpress.yml\n",
 
              "/opt/aws/bin/cfn-init -v ",
              "         --stack ", { "Ref" : "AWS::StackName" },
              "         --resource WebServerInstance ",
              "         --region ", { "Ref" : "AWS::Region" }, "\n",
+
+             "yum install -y git\n",
+             "git clone https://github.com/doubtingben/aws-cf-wordpress /opt/aws-cf-wordpress\n",
+             "pip install ansible\n",
+             "/usr/local/bin/ansible-playbook -i \"localhost,\" -c local /opt/aws-cf-wordpress/wordpress.yml\n",
 
              "/opt/aws/bin/cfn-signal -e $? ",
              "         --stack ", { "Ref" : "AWS::StackName" },

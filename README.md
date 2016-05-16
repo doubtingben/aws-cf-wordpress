@@ -4,6 +4,20 @@ aws-cf-wordpress is a repo containing an AWS Cloudformation template and the Ans
 
 This repository is cloned to the template's instances at ```/opt/aws-cf-wordpress```
 
+### Expectations and assumptions
+
+##### Expectations
+
+- The [```aws```](https://aws.amazon.com/cli/) cli tools are installed and credentials configured
+- The configuration will be deployed to us-east-1 (limitation of specifying the Instance ImageId)
+- The InstanceType launched will be t2.micro (minimizing resources to fit requirements)
+
+##### Assumptions
+
+- The template user will provide an SSH Key name already configured in AWS
+- The Output of the template run will return a URL to access the new site
+
+
 #### Installation from cli
 
 To create a stack using the *aws* cli:
